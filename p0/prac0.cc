@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-//DECLARACIÓN MÓDULOS
+//DECLARACIÓN MÓDULOS 
 //función que se encarga de devolver true si a es múltiplo de b o viceversa,
 //y false si ninguno de los dos es múltiplo del otro
 bool multiple(int a,int b){
