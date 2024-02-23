@@ -1,4 +1,4 @@
 // Programación 2 - Práctica 1
-// DNI:
-// Nombre:
+// DNI: x8594224k
+// Nombre: Letisia Monica Sandu
 
