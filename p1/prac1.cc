@@ -81,6 +81,72 @@ void showMenu(){
 }
 
 // Función principal. Tendrás que añadir más código tuyo
+
+void addValor(vector<int> &enteros){
+	string valor;
+	int pos;
+	bool seguir;
+	do{
+		cout << "Nuevo valor: ";
+		getline(cin, valor);
+		if(valor.empty()){
+			error(ERR_EMPTY);		
+			seguir = false;
+		}
+		else{
+			int nuevo_entero = stoi(valor);
+			pos = buscarPosicion(enteros, nuevo_entero);
+			if(pos != -1){
+				seguir = true;
+				error(ERR_DUPLICATED);
+			}
+			else{
+				seguir = false;
+				enteros.push_back(nuevo_entero);
+			}
+		}
+	}while(seguir);
+}
+
+// Pedimos un valor y lo elimino
+void deleteValor(vector<int> &enteros){
+	string valor;
+	int pos;
+	bool seguir;
+	do{
+		cout << "Nuevo valor: ";
+		getline(cin, valor);
+		if(valor.empty()){
+			error(ERR_EMPTY);		
+			seguir = false;
+		}
+		else{
+			int nuevo_entero = stoi(valor);
+			pos = buscarPosicion(enteros, nuevo_entero);
+			if(pos == -1){
+				seguir = true;
+				error(ERR_NOT_EXIST);
+			}
+			else{
+				seguir = false;
+				enteros.erase(enteros.begin() + pos);
+			}
+		}
+	}while(seguir);
+	
+}
+
+void printValores(const vector<int> &enteros){
+	cout << "<";
+	for(int i = 0; i < enteros.size(); i++){
+		cout << enteros[i];
+		if(i != enteros.size() -1 ){
+			cout << ", ";
+		}
+	}
+	cout << ">";
+	cout << endl;
+}
 int main(){
     char option;
     
