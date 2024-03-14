@@ -80,141 +80,94 @@ void showMenu(){
          << "Option: ";
 }
 
-// Función principal. Tendrás que añadir más código tuyo
+int searchPosYear(int year, const vector<AcademicYear> &years){
+    int pos;
+    pos = -1;
 
-void addValor(vector<int> &enteros){
-	string valor;
-	int pos;
-	bool seguir;
-	do{
-		cout << "Nuevo valor: ";
-		getline(cin, valor);
-		if(valor.empty()){
-			error(ERR_EMPTY);		
-			seguir = false;
-		}
-		else{
-			int nuevo_entero = stoi(valor);
-			pos = buscarPosicion(enteros, nuevo_entero);
-			if(pos != -1){
-				seguir = true;
-				error(ERR_DUPLICATED);
-			}
-			else{
-				seguir = false;
-				enteros.push_back(nuevo_entero);
-			}
-		}
-	}while(seguir);
+    for(int i = 0; i < years.size() && pos == -1; i++){
+        if(years[i].id == year){
+            pos = i;
+        }
+    }
+    return pos;
 }
 
-// Pedimos un valor y lo elimino
-void deleteValor(vector<int> &enteros){
-	string valor;
-	int pos;
-	bool seguir;
-	do{
-		cout << "Nuevo valor: ";
-		getline(cin, valor);
-		if(valor.empty()){
-			error(ERR_EMPTY);		
-			seguir = false;
-		}
-		else{
-			int nuevo_entero = stoi(valor);
-			pos = buscarPosicion(enteros, nuevo_entero);
-			if(pos == -1){
-				seguir = true;
-				error(ERR_NOT_EXIST);
-			}
-			else{
-				seguir = false;
-				enteros.erase(enteros.begin() + pos);
-			}
-		}
-	}while(seguir);
-	
+bool yearAsk(int &yearO, const vector<AcademicYear> &years){
+    int pos;
+    string year;
+    bool vacio;
+
+    do{
+        cout << "Enter academic year: ";
+        getline(cin, year);
+
+        if(year.length() == 0){
+            error(ERR_EMPTY);
+            vacio = true;
+        }else{
+            vacio = false;
+            pos = searchPosYear(stoi(year), years);
+            if(pos == -1){
+                yearO = stoi(year);
+            }else{
+                error(ERR_DUPLICATED);
+            }
+        }
+    }while(pos != -1 && !vacio);
+
+    return vacio;
 }
 
-void printValores(const vector<int> &enteros){
-	cout << "<";
-	for(int i = 0; i < enteros.size(); i++){
-		cout << enteros[i];
-		if(i != enteros.size() -1 ){
-			cout << ", ";
-		}
-	}
-	cout << ">";
-	cout << endl;
-}
+void addAcademicYear(vector<AcademicYear> &years){
+    int year;
+    AcademicYear nuevo;
+    bool vacio;
 
-/* Función que muestra los mensajes de error
-e: tipo de error a mostrar
-return: nada
-*/
-void error(Error e){
-    switch(e){
-        case ERR_OPTION: cout << "ERROR: wrong option" << endl;
-            break;
-        case ERR_EMPTY: cout << "ERROR: empty string" << endl;
-            break;
-        case ERR_DUPLICATED: cout << "ERROR: duplicated value" << endl;
-            break;
-        case ERR_NOT_EXIST: cout << "ERROR: value does not exist" << endl;
-            break;
-        case ERR_RATING: cout << "ERROR: number out of range" << endl;
+    vacio = yearAsk(nuevo.id, years);
+
+    if(!vacio){
+        years.push_back(nuevo);
     }
 }
 
-/* Función que muestra el menú de opciones
-return: nada
-*/
-void showMenu(){
-    cout << "1- Add academic year" << endl
-         << "2- Delete academic year" << endl
-         << "3- Add teacher" << endl
-         << "4- Delete teacher" << endl
-         << "5- Show teacher" << endl
-         << "6- Add phrase" << endl
-         << "7- Summary" << endl
-         << "q- Quit" << endl
-         << "Option: ";
+int yearAsk(const vector<AcademicYear> &years){
+    string year;
+    bool b;
+    int pos;
+    pos = -1;
+
+    do{
+        cout << "Enter academic year: ";
+        getline(cin, year);
+
+        if(year.length() == 0){
+            error(ERR_EMPTY);
+            b = false;
+        }else{
+            pos = searchPosYear(stoi(year), years);
+
+            if(pos == -1){
+                error(ERR_NOT_EXIST);
+                b = true;
+            }else{
+                b = false;
+            }
+        }
+    }while(b);
+
+    return pos;
 }
 
-void showGirls(const vector<AcademicYear> &years){
-	// mostrar los identificadores
-	cout << "los identificadores" << endl;
-	cout << "===================" << endl;
-	for(int i = 0; i< years.size(); i++){
-		cout << years[i].id << endl;
-		for(int j = 0; j < years[i].listTeachers.size(); j++){
-			cout << "\t" << years[i].listTeachers[j].name << ", " 
-			<< years[i].listTeachers[j].nickname<< ", " << years[i].listTeachers[j].rating << endl;			
-			for(int k = 0; k < years[i].listTeachers[j].listPhrases.size(); k++){
-				cout << "\t\t" << years[i].listTeachers[j].listPhrases[k].text << endl;
-			}
-		}
-	}
+void deleteAcademicYear(vector<AcademicYear> &years){
+    int pos;
+
+    pos = yearAsk(years);
+
+    if(pos != -1){
+        years.erase(years.begin() + pos);
+    }
 }
 
-
-
-/*
-	FUNCION QUE PIDE AL USUARIO UN AÑO ACADEMICO Y DEVUELVE LA POSICION
-	DONDE SE ENCUENTRA DICHO AÑO ACADEMICO O -1 SI METIO VACIO.
-*/
-
-// -1 si no si esta
-// la posicion si esta
-int searchPosYear(const vector<AcademicYear> &years, int year){
-	int pos = -1;
-	for(int i = 0; i < years.size()&& pos == -1; i++){
-		if(years[i].id == year){
-			pos = i;
-		}
-	}
-	return pos;
-}
 int main(){
     char option;
     
