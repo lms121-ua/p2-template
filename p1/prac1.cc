@@ -302,6 +302,43 @@ void printRating(int rating){
 	}
 	cout << endl;
 }
+
+void printRating(int rating){
+	cout << "Rating: ";
+	for(int i = 1; i <= rating; i++){
+		cout << "*";
+	}
+	cout << endl;
+}
+
+/*
+Phrase 1 (2021-2-10) [8]: Imaginemos una vaca esferica
+Phrase 2 [7]: El mejor ejemplo de nihilistas lo podemos encontrar en un gimnasio
+Phrase 3 (2021-2-14): Tolkien es como Rambo, pero en profesor de Oxford
+Phrase 4: Hasta yo tengo mi parte malvada. Voy a Ikea y me llevo el lapiz
+*/
+void print(const Date &date){
+	cout << " (" << date.year << "-" << date.month << "-" << date.day << ")";
+}
+
+void print(const Phrase &p){
+	if(p.date.day != 0){
+		print(p.date);
+	}
+	if(p.rating != 0){
+		cout << " [" << p.rating << "]";
+	}
+	cout << ": " << p.text << endl;
+}
+
+
+void print(const vector<Phrase> &phrases){
+	for(int i = 0; i < phrases.size(); i++){
+		cout << "Phrase " << i + 1;
+		print(phrases[i]);
+	}
+}
+
 int main(){
     char option;
     
