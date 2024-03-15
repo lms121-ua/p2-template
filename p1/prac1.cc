@@ -167,7 +167,141 @@ void deleteAcademicYear(vector<AcademicYear> &years){
         years.erase(years.begin() + pos);
     }
 }
+void searchTeacher(string nameTeacher, int &posTeacher, int &posYear, const vector<AcademicYear> &years){
+    int i, j;
+    posYear = -1;
+    posTeacher = -1;
 
+    for(i = 0; i < years.size() && posYear == -1; i++){
+        for(j = 0; j < years[i].listTeachers.size() && posYear == -1; j++){
+            if(years[i].listTeachers[j].name == nameTeacher){
+                posYear = i;
+                posTeacher = j;
+            } 
+        }
+    }
+}
+
+void askSimba(int &rating, int ini, int fin){
+	string aux;
+	bool seguir;
+	seguir = true;	
+	do{
+		cout << "Enter rating: ";
+		getline(cin, aux);
+		if(aux == ""){
+			rating = 0;
+			seguir = false;
+		}
+		else{
+			rating = stoi(aux);
+			if(rating < ini || rating > fin){
+				error(ERR_RATING);
+				seguir = true;
+			}
+			else{
+				seguir = false;
+			}
+		}
+	}while(seguir);
+}
+
+bool askDataTeacher(const vector<AcademicYear> &years, Teacher &nuevo){
+	bool e;
+	string aux;
+	
+	cout << "Enter nickname: ";
+	getline(cin, nuevo.nickname);
+	cout << "Enter subject: ";
+	getline(cin, aux);
+	if(aux == ""){
+		e = true;
+		error(ERR_EMPTY);
+	}
+	else{
+		strncpy(nuevo.subject, aux.c_str(), MAXSUBJECT);
+		nuevo.subject[MAXSUBJECT - 1] = '\0';
+		askSimba(nuevo.rating, 1, 5);
+		e = false;
+	}
+	return e;
+}
+
+
+void askTeacher(const vector<AcademicYear> &years, string &name){
+	int posYear, posTeacher;
+	do{
+		cout << "Enter teacher name: ";
+		getline(cin, name);
+		if(name == ""){
+			error(ERR_EMPTY);
+		}
+		else{
+			searchTeacher(name, posYear, posTeacher, years);
+			if(posYear != -1){
+				error(ERR_DUPLICATED);
+			}
+		}
+	}while(name != "" && posYear != -1);
+}
+
+void addTeacher(vector<AcademicYear> &years){
+	Teacher nuevo;
+	int pos;	
+	bool error;
+	
+	pos = yearAsk(years); 
+	if(pos != -1){
+		askTeacher(years, nuevo.name);
+		if(nuevo.name != ""){		
+			error = askDataTeacher(years, nuevo);
+			if(!error){
+				years[pos].listTeachers.push_back(nuevo);
+			}
+		}
+	}	
+}
+
+void askTeacher(const vector<AcademicYear> &years, int &posYear, int &posTeacher){
+	string name;
+	bool b;
+	posYear = posTeacher = -1;
+	do{
+		cout << "Enter teacher name: ";
+		getline(cin, name);
+		if(name == ""){
+			error(ERR_EMPTY);
+			b = false; // no seguimos con el teacher
+		}
+		else{
+			searchTeacher(name, posYear, posTeacher, years);
+			if(posYear == -1){
+				error(ERR_NOT_EXIST);
+				b = true;
+			}
+			else{
+				b = false; // seguimos con el teacher
+			}
+		}
+	}while(b);
+}
+
+// detele teacher
+void deleteTeacher(vector<AcademicYear> &years){
+	int posTeacher, posYear;
+	askTeacher(years, posYear, posTeacher);
+	if(posYear != -1){
+		years[posYear].listTeachers.erase(years[posYear].listTeachers.begin() + posTeacher);
+	}
+}
+
+void printRating(int rating){
+	cout << "Rating: ";
+	for(int i = 1; i <= rating; i++){
+		cout << "*";
+	}
+	cout << endl;
+}
 int main(){
     char option;
     
