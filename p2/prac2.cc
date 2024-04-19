@@ -103,7 +103,78 @@ void showMenu() {
          << "q- Quit" << endl
          << "Option: ";
 }
+string askUnit(){
+    string auxiliar;
+    int id;
+    bool pedir;
 
+    pedir = true;
+    while(pedir){
+        cout << "Enter unit: ";
+        getline(cin, auxiliar);
+
+        if(auxiliar == ""){
+            error(ERR_EMPTY);
+            pedir = false;
+        
+        }else{
+            if(stoi(auxiliar) >= 1 && stoi(aux) <= 5){
+                pedir = false;
+            
+            }else{
+                error(ERR_UNIT);
+            }
+        }
+    }
+
+    return auxiliar;
+}
+
+string askQuestion(){
+    string pregunta;
+    bool preguntar;
+
+    preguntar = true;
+    do{
+        cout << "Enter question: ";
+        getline(cin, pregunta);
+
+        if(pregunta == ""){
+            preguntar = false;
+            error(ERR_EMPTY);
+
+        }else{
+            if(pregunta.find('|') == string::npos){
+                preguntar = false;
+
+            }else{
+                preguntar = true;
+                error(ERR_CHAR);
+            }
+        }
+    }while(preguntar);
+
+    return pregunta;
+}
+
+void addQuestion(Database &data){
+    string nueva_unit, nueva_question;
+    int auxiliar;
+
+    nueva_unit = askUnit();
+    if(auxiliar != ""){
+        nueva_question = askQuestion();
+
+        if(nueva_question != ""){
+            Question nueva;
+            nueva.id = data.nextId++;
+            nueva.unit = stoi(nueva_unit);
+            nueva.question = nueva_question;
+            nueva.answer = "";
+            data.questions.push_back(nueva);
+        }
+    }
+}
 // Función principal. Tendrás que añadir más código tuyo
 int main(int argc, char *argv[]) {
     Database data;
