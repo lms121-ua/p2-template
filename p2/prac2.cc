@@ -184,6 +184,108 @@ void deleteQuestion(Database &data){
     }while(s_id != "" && pos == -1);
 }
 
+bool testTeacherName(string name){
+    bool ok;
+    int i, tam;
+    
+    ok = true;
+    i = 0;
+    tam = name.length();
+    while(i < tam && ok){
+        if(name[i] != ' ' && isalpha(name[i]) == 0){
+            ok = false;
+        }
+        else{
+            i++;
+        }
+    }
+    return ok;
+}
+
+int buscarTeacherByName(const vector<Teacher> &teachers, string name){
+    int pos, i;
+    pos = -1;
+    for(i = 0; i < teachers.size() && pos == -1; i++){
+        if(teachers[i].name == name){
+            pos = i;
+        }
+    }   
+    return pos;
+}
+
+string trip(string name){
+    string tripi = "";
+    int pi, pf, tam;
+    pi = 0;
+    tam = name.length();
+    while(pi < tam && name[pi] == ' '){
+        pi++;
+    }
+    pf = tam - 1;
+    while(pf >= 0 && name[pf] == ' '){
+        pf--;
+    }
+    tripi = name.substr(pi, pf - pi + 1);
+    return tripi;
+}
+
+string superEficienteTrip(string name){
+    string tripi = "";
+    int pi, pf, i, tam;
+    tam = name.length();
+    i = 0;
+    pi = pf = -1;
+    while(i < name.length()){
+        if(name[i] != ' '){
+            if(pi == -1){
+                pi = i;
+            }
+            if(i > pf){
+                pf = i;
+            }
+        }
+        else{
+            i++;
+        }
+    }
+    tripi = name.substr(pi, pf - pi);   
+    return tripi;
+}
+
+
+string askTeacher(const vector<Teacher> &teachers){
+    string name;
+    int pos = -1;
+    bool ok_name = false;
+    do{
+        cout << "Enter teacher name: ";
+        getline(cin, name);
+        if(name == ""){
+            error(ERR_EMPTY);
+        }
+        else{
+            ok_name = testTeacherName(name);
+            if(!ok_name){
+                error(ERR_NAME);
+            }
+            else{
+                name = trip(name);
+                if(name.length() < 3 || name.length() >= KMAXNAME){
+                    error(ERR_NAME);
+                    ok_name = false;
+                }
+                else{
+                    pos = buscarTeacherByName(teachers, name);  
+                    if(pos != -1){
+                        error(ERR_DUPLICATED);
+                    }
+                }
+            }
+        }
+    }while(name != "" && (!ok_name || pos != -1));
+    return name;
+}
+
 // Función principal. Tendrás que añadir más código tuyo
 int main(int argc, char *argv[]) {
     Database data;
