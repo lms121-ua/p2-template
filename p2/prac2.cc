@@ -103,78 +103,87 @@ void showMenu() {
          << "q- Quit" << endl
          << "Option: ";
 }
-string askUnit(){
-    string auxiliar;
-    int id;
-    bool pedir;
+int buscarQuestionById(const vector<Question> &questions, int id){
+    int pos, i;
+    pos = -1;
+    for(i = 0; i < questions.size() && pos == -1; i++){
+        if(questions[i].id == id){
+            pos = i;
+        }
+    }
+    return pos;
+}
 
-    pedir = true;
-    while(pedir){
+int buscarQuestionByIdOnlyFans(const vector<Question> &questions, int id){
+    int pos, i;
+    pos = -1;
+    for(i = 0; i < questions.size() && pos == -1; i++){
+        if(questions[i].id == id && questions[i].answer == ""){
+            pos = i;
+        }
+    }
+    return pos;
+}
+void addQuestion(Database &db){
+    string s_unit, question;
+    unsigned int unit = 0;
+    size_t pos = string::npos;
+    do{
         cout << "Enter unit: ";
-        getline(cin, auxiliar);
-
-        if(auxiliar == ""){
+        getline(cin, s_unit);
+        if(s_unit == ""){
             error(ERR_EMPTY);
-            pedir = false;
-        
-        }else{
-            if(stoi(auxiliar) >= 1 && stoi(aux) <= 5){
-                pedir = false;
-            
-            }else{
+        }
+        else{
+            unit = stoi(s_unit);
+            if(unit < 1 || unit > 5){
                 error(ERR_UNIT);
             }
         }
+    }while(s_unit != "" && (unit < 1 || unit > 5));
+    if(s_unit != ""){
+        do{
+            cout << "Enter question: ";
+            getline(cin, question);
+            if(question == ""){
+                error(ERR_EMPTY);
+            }
+            else{
+                pos = question.find('|');
+                if(pos != string::npos){
+                    error(ERR_CHAR);
+                }       
+            }
+        }while(question != "" && pos != string::npos);
+        if(question != ""){
+            db.questions.push_back({db.nextId, unit, question, ""});
+            db.nextId++; 
+        }
     }
-
-    return auxiliar;
 }
 
-string askQuestion(){
-    string pregunta;
-    bool preguntar;
-
-    preguntar = true;
+void deleteQuestion(Database &data){
+    string s_id;
+    int id, pos = -1;
     do{
-        cout << "Enter question: ";
-        getline(cin, pregunta);
-
-        if(pregunta == ""){
-            preguntar = false;
+        cout << "Enter question id: ";
+        getline(cin, s_id);
+        if(s_id == ""){
             error(ERR_EMPTY);
-
-        }else{
-            if(pregunta.find('|') == string::npos){
-                preguntar = false;
-
-            }else{
-                preguntar = true;
-                error(ERR_CHAR);
+        }
+        else{
+            id = stoi(s_id);
+            pos = buscarQuestionById(data.questions, id);
+            if(pos == -1){
+                error(ERR_ID);
+            }
+            else{
+                data.questions.erase(data.questions.begin() + pos); 
             }
         }
-    }while(preguntar);
-
-    return pregunta;
+    }while(s_id != "" && pos == -1);
 }
 
-void addQuestion(Database &data){
-    string nueva_unit, nueva_question;
-    int auxiliar;
-
-    nueva_unit = askUnit();
-    if(auxiliar != ""){
-        nueva_question = askQuestion();
-
-        if(nueva_question != ""){
-            Question nueva;
-            nueva.id = data.nextId++;
-            nueva.unit = stoi(nueva_unit);
-            nueva.question = nueva_question;
-            nueva.answer = "";
-            data.questions.push_back(nueva);
-        }
-    }
-}
 // Función principal. Tendrás que añadir más código tuyo
 int main(int argc, char *argv[]) {
     Database data;
